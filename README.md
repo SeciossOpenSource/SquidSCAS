@@ -7,6 +7,7 @@ SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュー�
 ## 環境
 * OS：CentOS7
 * ミドルウェア：squid
+
 ## インストール
 ### rpmパッケージ
 ~~~ text
@@ -45,12 +46,11 @@ SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュー�
 
 ### SWG
 ~~~ text
-# cp swg/sbin/*.sh /usr/local/sbin
-# cp swg/sbin/*.conf /usr/local/etc
+# cp scripts/*.sh /usr/local/sbin
+# cp scripts/*.conf /usr/local/etc
 # chmod +x /usr/loca/sbin/*.sh
-# cp swg/squid/* /etc/squid
-# cp swg/squidscas/scripts/* /usr/local/sbin
-# cp swg/systemd/c-icap.service /usr/lib/systemd/system
+# cp squid/* /etc/squid
+# cp squidscas/scripts/* /usr/local/sbin
 ~~~
 
 ## 設定
