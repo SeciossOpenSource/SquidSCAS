@@ -17,25 +17,13 @@ SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュー�
 # yum install file-devel
 # yum install openssl-devel
 # yum install squid
-# yum install perl-Module-Build
-# yum install perl-URI
 # yum install perl-Digest-SHA
 # yum install perl-Digest-SHA1
 # yum install perl-Sys-Syslog
-# yum install perl-Mail-Sendmail
 # yum install perl-Config-General
-# yum install perl-Config-IniFiles
-# yum install perl-Crypt-CBC
-# yum install perl-Crypt-OpenSSL-Random
-# yum install perl-Crypt-OpenSSL-RSA
-# yum install perl-Crypt-OpenSSL-X509
-# yum install perl-AppConfig
-# yum install perl-CGI
-# yum install perl-Net-Ipv4Addr
 # yum install perl-JSON
 # yum install perl-LDAP
-# yum install perl-PHP-Serialization
-# yum install libmcrypt
+# yum install perl-Cache-Memcached
 ~~~
 
 ### c-icap
@@ -84,7 +72,7 @@ SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュー�
 ~~~ text
 ...
 
-auth_param basic program /usr/lib64/squid/basic_ldap_auth -b 'dc=secioss,dc=co,dc=jp' -D 'cn=replicator,dc=secioss,dc=co,dc=jp' -w xxxxx -f '(&(seciossSystemId=%s)(&(objectClass=account)(objectClass=seciossIamAccount)))' localhost
+auth_param basic program /usr/lib64/squid/basic_ldap_auth -b 'dc=secioss,dc=co,dc=jp' -D 'cn=replicator,dc=secioss,dc=co,dc=jp' -w xxxxx -f '(&(uid=%s)(&(objectClass=inetOrgPerson)(objectClass=seciossIamAccount)))' localhost
 ...
 ~~~
 
@@ -111,7 +99,7 @@ Service squidscas squidscas.so
 
 ~~~ text
 scanpath /usr/local/var/scan
-memcached_servers 172.18.1.4
+memcached_servers localhost
 servicelist /etc/squid/scas_service.conf
 viruslist /etc/squid/virus
 ~~~
