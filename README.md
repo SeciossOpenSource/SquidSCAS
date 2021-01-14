@@ -79,7 +79,8 @@ auth_param basic program /usr/lib64/squid/basic_ldap_auth -b 'dc=secioss,dc=co,d
 ...
 ~~~
 
-/usr/local/etc/collectBlackList.confのptkeyにphishtankのキーを設定してから、以下のコマンドを実行して下さい。
+/usr/local/etc/collectBlackList.confのptkeyにphishtankのアプリケーションキーを設定してから、以下のコマンドを実行して下さい。
+アプリケーションキーはphishtankにアカウントを作成して、https://www.phishtank.com/api_register.php から作成して下さい。
 
 ~~~ text
 # /usr/local/sbin/collectBlackList.sh
