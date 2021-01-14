@@ -112,9 +112,10 @@ viruslist /etc/squid/virus
 ~~~ text
 workdir = /usr/local/var/scan
 cuckoo_url = http://172.18.1.6:8090
-cuckoo_token = xxxxx
+cuckoo_token = xxxxxxxxxx
 hardlimit = 7.0
 viruslist = /etc/squid/virus
+log_server = <LISMのサーバー>
 ~~~
 
 以下のディレクトリを作成して下さい。
