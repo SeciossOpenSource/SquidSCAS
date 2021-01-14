@@ -30,6 +30,7 @@ SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュー�
 ~~~
 
 ### c-icap
+c-icapを http://c-icap.sourceforge.net/download.html からダウンロードしてインストールします。
 ~~~ text
 # tar zxvf c_icap-0.5.6.tar.gz
 # cd c_icap-0.5.6
@@ -46,7 +47,7 @@ SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュー�
 # make install
 ~~~
 
-### SWG
+### その他
 ~~~ text
 # cp scripts/*.sh /usr/local/sbin
 # cp scripts/*.conf /usr/local/etc
@@ -120,7 +121,6 @@ log_server = <LISMのサーバー>
 以下のディレクトリを作成して下さい。
 * /var/log/c-icap
 * /usr/local/var/scan
-* /etc/squid/virus
 
 ## rsyslog
 /etc/rsyslog.d/scas.confに以下の設定を行って下さい。
