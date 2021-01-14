@@ -25,6 +25,8 @@ SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュー�
 # yum install perl-JSON
 # yum install perl-LDAP
 # yum install perl-Cache-Memcached
+# yum install wget
+# yum install bzip2
 ~~~
 
 ### c-icap
