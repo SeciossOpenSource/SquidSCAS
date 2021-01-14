@@ -115,10 +115,6 @@ cuckoo_url = http://172.18.1.6:8090
 cuckoo_token = xxxxx
 hardlimit = 7.0
 viruslist = /etc/squid/virus
-ldap_uri = ldap://localhost
-ldap_binddn = "cn=replicator,dc=secioss,dc=co,dc=jp"
-ldap_bindpw = xxxxx
-ldap_basedn = "dc=secioss,dc=co,dc=jp"
 ~~~
 
 以下のディレクトリを作成して下さい。
