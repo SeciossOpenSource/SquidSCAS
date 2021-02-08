@@ -57,6 +57,13 @@ c-icapを http://c-icap.sourceforge.net/download.html からダウンロード�
 ~~~
 
 ## 設定
+## SELinux
+/etc/selinux/configの以下の個所を変更して、SELinuxを無効に設定して下さい。
+
+~~~ text
+SELINUX=permissive
+~~~
+
 ## squid
 以下のコマンドを実行して下さい。
 
@@ -202,4 +209,12 @@ if $programname == 'c-icap' and $msg contains 'LOG ' then {
         /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
     endscript
 }
+~~~
+
+## 起動
+以下のコマンドを実行して、squidを起動して下さい。
+
+~~~ text
+# /usr/local/bin/c-icap
+# systemctl start squid
 ~~~
