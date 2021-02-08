@@ -123,6 +123,14 @@ logformat scas %{%Y/%m/%d %H:%M:%S}tl %ts.%03tu %6tr %>a %Ss/%03Hs %>st %<st %rm
 access_log /var/log/squid/access.log scas
 ~~~
 
+/etc/squid/no_bump_sitesに、SSL Bumpの対象から外すサイトを設定して下さい。
+
+~~~ text
+www.google.com
+adservice.google.com
+chat.google.com
+~~~
+
 /usr/local/etc/collectBlackList.confのptkeyにphishtankのアプリケーションキーを設定してから、以下のコマンドを実行して下さい。
 アプリケーションキーはphishtankにアカウントを作成して、https://www.phishtank.com/api_register.php から作成して下さい。
 
