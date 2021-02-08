@@ -70,10 +70,13 @@ c-icapを http://c-icap.sourceforge.net/download.html からダウンロード�
 ~~~
 ※ squidCA.derはブラウザにCA証明書としてインポートして下さい。
 
-/etc/squid/squid.confのLDAPの設定を環境に合わせて変更して下さい。
+/etc/squid/squid.confを以下のように変更して下さい。
 
 ~~~ text
 ...
+# Example rule allowing access from your local networks.
+# Adapt localnet in the ACL section to list your (internal) IP networks
+# from where browsing should be allowed
 acl blacklist_domain dstdomain "/etc/squid/blacklist_domain"
 acl blacklist_url url_regex "/etc/squid/blacklist_url"
 acl blacklist_ip dst "/etc/squid/blacklist_ip"
@@ -81,13 +84,14 @@ http_access deny blacklist_domain
 http_access deny blacklist_url
 http_access deny blacklist_ip
 
-auth_param basic program /usr/lib64/squid/basic_ldap_auth -b 'dc=secioss,dc=co,dc=jp' -D 'cn=replicator,dc=secioss,dc=co,dc=jp' -w xxxxx -f '(&(uid=%s)(&(objectClass=inetOrgPerson)(objectClass=seciossIamAccount)))' localhost
+auth_param basic program /usr/lib64/squid/basic_ldap_auth -b 'dc=example,dc=com' -D 'cn=Manager,dc=example,dc=com' -w xxxxx -f '(&(uid=%s)(&(objectClass=inetOrgPerson)(objectClass=seciossIamAccount)))' localhost
 auth_param basic children 20
 auth_param basic realm Authentication
 auth_param basic credentialsttl 2 hours
 acl ldap-auth proxy_auth REQUIRED
 http_access allow ldap-auth
 ...
+# Squid normally listens to port 3128
 http_port 3128 ssl-bump generate-host-certificates=on dynamic_cert_mem_cache_size=4MB cert=/etc/squid/squidCA.pem
 
 sslcrtd_program /usr/lib64/squid/ssl_crtd -s /var/lib/squid/ssl_db -M 4MB
@@ -96,6 +100,7 @@ ssl_bump none no_bump_sites
 ssl_bump server-first all
 sslproxy_cert_error deny all
 ...
+
 icap_enable on
 icap_send_client_username on
 icap_send_client_ip on
