@@ -74,9 +74,41 @@ c-icapを http://c-icap.sourceforge.net/download.html からダウンロード�
 
 ~~~ text
 ...
+acl blacklist_domain dstdomain "/etc/squid/blacklist_domain"
+acl blacklist_url url_regex "/etc/squid/blacklist_url"
+acl blacklist_ip dst "/etc/squid/blacklist_ip"
+http_access deny blacklist_domain
+http_access deny blacklist_url
+http_access deny blacklist_ip
 
 auth_param basic program /usr/lib64/squid/basic_ldap_auth -b 'dc=secioss,dc=co,dc=jp' -D 'cn=replicator,dc=secioss,dc=co,dc=jp' -w xxxxx -f '(&(uid=%s)(&(objectClass=inetOrgPerson)(objectClass=seciossIamAccount)))' localhost
+auth_param basic children 20
+auth_param basic realm Authentication
+auth_param basic credentialsttl 2 hours
+acl ldap-auth proxy_auth REQUIRED
+http_access allow ldap-auth
 ...
+http_port 3128 ssl-bump generate-host-certificates=on dynamic_cert_mem_cache_size=4MB cert=/etc/squid/squidCA.pem
+
+sslcrtd_program /usr/lib64/squid/ssl_crtd -s /var/lib/squid/ssl_db -M 4MB
+acl no_bump_sites dstdomain "/etc/squid/no_bump_sites"
+ssl_bump none no_bump_sites
+ssl_bump server-first all
+sslproxy_cert_error deny all
+...
+icap_enable on
+icap_send_client_username on
+icap_send_client_ip on
+icap_client_username_header X-Authenticated-User
+icap_service service_req reqmod_precache bypass=0 icap://127.0.0.1:1344/squidscas
+adaptation_access service_req deny no_bump_sites
+adaptation_access service_req allow all
+icap_service service_resp respmod_precache bypass=0 icap://127.0.0.1:1344/squidscas
+adaptation_access service_resp deny no_bump_sites
+adaptation_access service_resp allow all
+
+logformat scas %{%Y/%m/%d %H:%M:%S}tl %ts.%03tu %6tr %>a %Ss/%03Hs %>st %<st %rm %ru %[un %Sh/%<a %mt
+access_log /var/log/squid/access.log scas
 ~~~
 
 /usr/local/etc/collectBlackList.confのptkeyにphishtankのアプリケーションキーを設定してから、以下のコマンドを実行して下さい。
