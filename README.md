@@ -81,6 +81,7 @@ SELINUX=permissive
 ※ squidCA.derはブラウザにCA証明書としてインポートして下さい。
 
 /etc/squid/squid.confを以下のように変更して下さい。
+LDAP認証の設定では、LISMのLDAPサーバーを指定して下さい。
 
 ~~~ text
 ...
@@ -94,7 +95,7 @@ http_access deny blacklist_domain
 http_access deny blacklist_url
 http_access deny blacklist_ip
 
-auth_param basic program /usr/lib64/squid/basic_ldap_auth -b 'dc=example,dc=com' -D 'cn=Manager,dc=example,dc=com' -w xxxxx -f '(&(uid=%s)(&(objectClass=inetOrgPerson)(objectClass=seciossIamAccount)))' localhost
+auth_param basic program /usr/lib64/squid/basic_ldap_auth -b 'dc=example,dc=com' -D 'cn=Manager,dc=example,dc=com' -w xxxxx -f '(&(uid=%s)(&(objectClass=inetOrgPerson)(objectClass=seciossIamAccount)))' <LISMのLDAPサーバー>
 auth_param basic children 20
 auth_param basic realm Authentication
 auth_param basic credentialsttl 2 hours
@@ -235,3 +236,16 @@ if $programname == 'c-icap' and $msg contains 'LOG ' then {
 # /usr/local/bin/c-icap
 # systemctl start squid
 ~~~
+
+## アクセス制限
+LISMの管理コンソールにログインして、「CASB」-「アクセスポリシー」からアクセス制限を行いたいサービスに対して、アクセスポリシーを設定します。
+アクセスポリシーの設定項目は、以下になります。
+|項目|説明|
+|---|---|
+|ID|アクセスポリシーのID|
+|カテゴリ|対象サービスのカテゴリ|
+|サービス|対象サービス|
+|許可する操作|サービスに対して、ユーザーに許可する操作|
+|許可するファイル拡張子|ダウンロード、アップロードを許可するファイルの拡張子|
+|説明|アクセスポリシーの説明|
+|状態|アクセスポリシーの有効・無効|
