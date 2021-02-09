@@ -175,6 +175,12 @@ log_server = <LISMのサーバー>
 * /var/log/c-icap
 * /usr/local/var/scan
 
+LISMのサーバー上で、以下のコマンドを実行して、作成されたscas_service.confを/etc/squidに置いて下さい。
+~~~ text
+/usr/local/sbin/scas_service.pl > scas_service.conf
+~~~
+
+
 ## rsyslog
 /etc/rsyslog.d/scas.confに以下の設定を行って下さい。
 
