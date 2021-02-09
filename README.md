@@ -47,6 +47,9 @@ c-icapを http://c-icap.sourceforge.net/download.html からダウンロード�
 # make install
 ~~~
 
+### 管理コンソール
+管理コンソールとして、LISM（https://github.com/SeciossOpenSource/LISM）をインストールして下さい。
+
 ### その他
 ~~~ text
 # cp scripts/*.sh /usr/local/sbin
