@@ -123,7 +123,7 @@ logformat scas %{%Y/%m/%d %H:%M:%S}tl %ts.%03tu %6tr %>a %Ss/%03Hs %>st %<st %rm
 access_log /var/log/squid/access.log scas
 ~~~
 
-/etc/squid/no_bump_sitesに、SSL Bumpの対象から外すサイトを設定して下さい。
+/etc/squid/no_bump_sitesに、SSL Bumpの対象から外すサイトを以下の例のように設定して下さい。
 
 ~~~ text
 www.google.com
