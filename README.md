@@ -8,6 +8,7 @@ SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュー�
 * OS：CentOS7
 * ミドルウェア：squid
 
+
 ## インストール
 ### rpmパッケージ
 ~~~ text
@@ -58,6 +59,7 @@ c-icapを http://c-icap.sourceforge.net/download.html からダウンロード�
 # cp squidscas/scripts/* /usr/local/sbin
 # cp squidscas/etc/* /usr/local/etc/
 ~~~
+
 
 ## 設定
 ## SELinux
@@ -232,6 +234,7 @@ if $programname == 'c-icap' and $msg contains 'LOG ' then {
 }
 ~~~
 
+
 ## 起動
 以下のコマンドを実行して、squidを起動して下さい。
 
@@ -240,6 +243,7 @@ if $programname == 'c-icap' and $msg contains 'LOG ' then {
 # /usr/local/bin/c-icap
 # systemctl start squid
 ~~~
+
 
 ## アクセス制限
 ### 管理コンソール
