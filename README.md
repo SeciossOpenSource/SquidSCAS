@@ -1,5 +1,5 @@
 # SquidSCAS
-SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュールで、フォワードプロキシー型CASBとして以下の機能を提供します。
+SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュールで、セキュアWebゲートウェイとして以下の機能を提供します。
 * サービス単位のアクセス制限
 * 更新、共有、ダウンロード、アップロードの制限
 * ダウンロード、またはアップロードしたファイルのサンドボックス解析
@@ -114,7 +114,6 @@ sslproxy_cert_error deny all
 
 icap_enable on
 icap_send_client_username on
-icap_send_client_ip on
 icap_client_username_header X-Authenticated-User
 icap_service service_req reqmod_precache bypass=0 icap://127.0.0.1:1344/squidscas
 adaptation_access service_req deny no_bump_sites
@@ -173,6 +172,10 @@ cuckoo_token = xxxxxxxxxx
 hardlimit = 7.0
 viruslist = /etc/squid/virus
 log_server = <LISMのサーバー>
+ldap_uri = <LISMのLDAPサーバーのURI>
+ldap_binddn = <LISMのLDAPサーバーに接続するDN>
+ldap_bindpw = <LISMのLDAPサーバーに接続するパスワード>
+ldap_basedn = <LISMのLDAPサーバーのベースDN>
 ~~~
 
 以下のディレクトリを作成して下さい。
@@ -239,6 +242,7 @@ if $programname == 'c-icap' and $msg contains 'LOG ' then {
 ~~~
 
 ## アクセス制限
+### 管理コンソール
 LISMの管理コンソールにログインして、「CASB」-「アクセスポリシー」からアクセス制限を行いたいサービスに対して、アクセスポリシーを設定します。
 アクセスポリシーの設定項目は、以下になります。
 |項目|説明|
@@ -259,3 +263,9 @@ LISMの管理コンソールにログインして、「CASB」-「アクセス�
 |ログインを許可するユーザー|サービスにログインするユーザーの制限（LDAPに登録されているユーザーかどうかやログインするユーザーのドメインで制限することができます）|
 |共有を許可するユーザー|クラウドストレージで共有を許可するユーザー|
 |グループ|アクセスを許可するグループ|
+
+### squidscas
+プロキシーサーバー上で以下のコマンドを実行すると、管理コンソールで設定したアクセスポリシーがsquidscasに反映されます。
+~~~ text
+# /usr/local/sbin/scas_accesspolicy.pl
+~~~
