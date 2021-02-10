@@ -233,6 +233,7 @@ if $programname == 'c-icap' and $msg contains 'LOG ' then {
 以下のコマンドを実行して、squidを起動して下さい。
 
 ~~~ text
+# systemctl start memcached
 # /usr/local/bin/c-icap
 # systemctl start squid
 ~~~
