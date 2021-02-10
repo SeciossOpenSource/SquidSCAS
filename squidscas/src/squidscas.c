@@ -946,8 +946,10 @@ int squidscas_check_preview_handler(char *preview_data, int preview_data_len,
 	    data->user = ci_buffer_alloc(strlen(username)+1);
 	    strcpy(data->user, username);
 
-	    data->clientip = ci_buffer_alloc(strlen(clientip)+1);
-	    strcpy(data->clientip, clientip);
+            if (clientip) {
+	        data->clientip = ci_buffer_alloc(strlen(clientip)+1);
+	        strcpy(data->clientip, clientip);
+            }
 
             data->operation = ci_buffer_alloc(strlen(operation)+1);
             strcpy(data->operation, operation); 

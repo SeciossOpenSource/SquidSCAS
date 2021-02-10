@@ -59,6 +59,7 @@ my $m = new Cache::Memcached({servers => \@hosts,
                                 });
 
 my %policies;
+my $service_acl = 'function:antivirus';
 my $filter = "(&(objectClass=seciossAccessPolicy)(seciossRuleEnabled=TRUE))";
 $msg = $ldap->search(base => "ou=AccessPolicies,$ldap_basedn", filter => $filter);
 if ($msg->code) {
@@ -83,7 +84,10 @@ for (my $i = 0; $i < $msg->count; $i++) {
     if (@groups && $groups[0] !~ /^ *$/) {
         ${$policies{$id}}{groups} = \@groups;
     }
+    $service_acl .= ','.$service.':'.$id.'='.join('+', @roles);
 }
+
+$m->set('secioss_acl', $service_acl);
 
 $msg = $ldap->search(base => "ou=People,$ldap_basedn", filter => "(&(objectClass=inetOrgPerson)(objectClass=seciossIamAccount))", attrs => ['uid', 'mail', 'ou', 'memberof']);
 if ($msg->code) {
