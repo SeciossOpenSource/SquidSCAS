@@ -49,7 +49,7 @@ c-icapを http://c-icap.sourceforge.net/download.html からダウンロード�
 ~~~
 
 ### 管理コンソール
-管理コンソールとして、LISM( https://github.com/SeciossOpenSource/LISM )をインストールして下さい。
+管理コンソールとして、LISM( https://github.com/SeciossOpenSource/LISM )を別サーバーにインストールして下さい。
 
 ### その他
 ~~~ text
