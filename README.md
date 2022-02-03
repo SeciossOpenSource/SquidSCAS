@@ -54,6 +54,7 @@ c-icapを http://c-icap.sourceforge.net/download.html からダウンロード�
 ### その他
 ~~~ text
 # cp scripts/*.sh /usr/local/sbin
+# cp scripts/*.pl /usr/local/sbin
 # cp scripts/*.conf /usr/local/etc
 # cp squid/* /etc/squid
 # cp squidscas/scripts/* /usr/local/sbin
@@ -174,10 +175,6 @@ cuckoo_token = xxxxxxxxxx
 hardlimit = 7.0
 viruslist = /etc/squid/virus
 log_server = <LISMのサーバー>
-ldap_uri = <LISMのLDAPサーバーのURI>
-ldap_binddn = <LISMのLDAPサーバーに接続するDN>
-ldap_bindpw = <LISMのLDAPサーバーに接続するパスワード>
-ldap_basedn = <LISMのLDAPサーバーのベースDN>
 ~~~
 
 以下のディレクトリを作成して下さい。
