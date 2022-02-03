@@ -48,7 +48,7 @@ fi
 
 if [ "$type" = "conf" ]; then
     updated=0
-    scp swg@$host:/data/cloud_discovery_swg/conf/* /etc/squid/tmp
+    scp $user@$host:/data/cloud_discovery_swg/conf/* /etc/squid/tmp
     for file in `ls /etc/squid/tmp`; do
         if [ -n "`diff /etc/squid/$file /etc/squid/tmp/$file`" ]; then
             cp /etc/squid/tmp/$file /etc/squid
