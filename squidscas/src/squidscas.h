@@ -1,8 +1,6 @@
 #ifndef __SRV_CLAMAV_H
 #define __SRV_CLAMAV_H
 
-#define LOG_URL_SIZE 256
-
 #include <sys/types.h>
 #include <stdio.h>
 #include <time.h>
@@ -24,23 +22,6 @@
 #include <sys/wait.h>
 #include "txt_format.h"
 
-/* util.h */
-void xstrncpy(char *, const char *, size_t);
-void chomp(char *);
-int isPathExists(const char *);
-int isFileExists(const char *);
-int isPathSecure(const char *);
-size_t strlcat(char *dst, const char *src, size_t siz);
-size_t xstrnlen(const char *s, size_t n);
-char** split( char* str, const char* delim);
-
-/* log.h */
-#ifdef __GNUC__
-void logit(char *, char *, ...) __attribute__ ((format (printf, 2, 3)));
-#else
-void logit(char *, char *, ...);
-#endif
-
 /* squidscas.h */
 /*************  Default configuration file location  ***********/
 #define CONFIG_FILE "squidscas.conf"
@@ -60,9 +41,9 @@ void logit(char *, char *, ...);
 extern char *strdup (char *s) /*@*/ ;
 #endif
 
-#include<stdarg.h>
-#include<sys/types.h>
-#include<regex.h>
+#include <stdarg.h>
+#include <sys/types.h>
+#include <regex.h>
 #define LOW_CHAR 32
 #define SMALL_CHAR 128
 #define LOW_BUFF 256
@@ -85,16 +66,14 @@ struct IN_BUFF {
     char fqdn[1024];
 };
 
-#define WHITELIST      1
-#define TRUSTUSER      2
-#define TRUSTCLIENT    3
-#define ABORT          4
-#define ABORTCONTENT   5
-#define SCAN           6
-#define SCANCONTENT    7
-#define BLACKLIST      8
-#define UNTRUSTUSER    9
-#define UNTRUSTCLIENT 10
+#define TRUSTUSER      1
+#define TRUSTCLIENT    2
+#define ABORT          3
+#define ABORTCONTENT   4
+#define SCAN           5
+#define SCANCONTENT    6
+#define UNTRUSTUSER    7
+#define UNTRUSTCLIENT  8
 
 #define INVALID_CHARS "\\/:*?<>|"
 #define PREFIX_SCAN "scan_"
@@ -116,13 +95,6 @@ struct IP {
     short third;
 };
 
-typedef struct {
-    char *pattern;
-    int type;
-    int flag;
-    regex_t regexv;
-} SCPattern;
-
 int add_pattern(char *s, int level);
 void regcomp_pattern(void);
 int load_in_buff(char *);
@@ -141,10 +113,4 @@ int readFileContent(char *filepath, char *kind);
     #endif
 #endif
 
-#define debugs(LEVEL, ARGS...) \
-    { \
-        ci_debug_printf(LEVEL, "%s(%d) %s: ", __FILE__, __LINE__, __FUNCTION__); \
-        ci_debug_printf(LEVEL, ARGS); \
-    }
-
-#endif
+#endif /* LOG_URL_SIZE */
