@@ -5,19 +5,20 @@ SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュー�
 * ダウンロード、またはアップロードしたファイルのサンドボックス解析
 
 ## 環境
-* OS：CentOS7
+* OS：AlmaLinux8
 * ミドルウェア：squid
 
 
 ## インストール
 ### rpmパッケージ
 ~~~ text
-# yum install gcc
-# yum install memcached
-# yum install libmemcached
-# yum install libmemcached-devel
-# yum install file-devel
-# yum install openssl-devel
+# dnf install gcc
+# dnf install memcached
+# dnf install libmemcached
+# dnf install libmemcached-devel
+# dnf install file-devel
+# dnf install openssl-devel
+# dnf install libcurl-devel
 # yum install squid
 # yum install perl-Digest-SHA
 # yum install perl-Digest-SHA1
@@ -33,8 +34,8 @@ SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュー�
 ### c-icap
 c-icapを http://c-icap.sourceforge.net/download.html からダウンロードしてインストールします。
 ~~~ text
-# tar zxvf c_icap-0.5.6.tar.gz
-# cd c_icap-0.5.6
+# tar zxvf c_icap-0.5.8.tar.gz
+# cd c_icap-0.5.8
 # ./configure
 # make
 # make install
