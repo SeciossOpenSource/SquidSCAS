@@ -80,7 +80,7 @@ SELINUX=permissive
 # cp squidCA.pem /etc/squid/
 # openssl x509 -in squidCA.pem -outform DER -out squidCA.der
 # mkdir -p /var/lib/squid
-# /usr/lib64/squid/ssl_crtd -c -s /var/lib/squid/ssl_db
+# /usr/lib64/squid/security_file_certgen -c -s /var/lib/squid/ssl_db -M 20MB
 # chown -R squid:squid /var/lib/squid
 ~~~
 ※ squidCA.derはブラウザにCA証明書としてインポートして下さい。
