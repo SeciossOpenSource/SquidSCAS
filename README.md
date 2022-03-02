@@ -61,7 +61,6 @@ c-icapを http://c-icap.sourceforge.net/download.html からダウンロード�
 # cp scripts/*.conf /usr/local/etc
 # cp squid/* /etc/squid
 # cp squidscas/scripts/* /usr/local/sbin
-# cp squidscas/etc/* /usr/local/etc/
 ~~~
 
 
