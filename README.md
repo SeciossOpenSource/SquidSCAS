@@ -12,6 +12,8 @@ SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュー�
 ## インストール
 ### rpmパッケージ
 ~~~ text
+# dnf config-manager --set-enabled powertools
+# dnf install epel-release
 # dnf install gcc
 # dnf install memcached
 # dnf install libmemcached
@@ -19,16 +21,16 @@ SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュー�
 # dnf install file-devel
 # dnf install openssl-devel
 # dnf install libcurl-devel
-# yum install squid
-# yum install perl-Digest-SHA
-# yum install perl-Digest-SHA1
-# yum install perl-Sys-Syslog
-# yum install perl-Config-General
-# yum install perl-JSON
-# yum install perl-LDAP
-# yum install perl-Cache-Memcached
-# yum install wget
-# yum install bzip2
+# dnf install squid
+# dnf install perl-Digest-SHA
+# dnf install perl-Digest-SHA1
+# dnf install perl-Sys-Syslog
+# dnf install perl-Config-General
+# dnf install perl-JSON
+# dnf install perl-LDAP
+# dnf install perl-Cache-Memcached
+# dnf install wget
+# dnf install bzip2
 ~~~
 
 ### c-icap
