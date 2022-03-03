@@ -98,7 +98,7 @@ for (my $i = 0; $i < $msg->count; $i++) {
     $service_acl .= ','.$service.':'.$id.'='.join('+', @roles);
 }
 
-$m->set('secioss_acl', $service_acl);
+$m->set('service_acl', $service_acl);
 
 $msg = $ldap->search(base => "ou=People,$ldap_basedn", filter => "(&(objectClass=inetOrgPerson)(objectClass=seciossIamAccount))", attrs => ['uid', 'mail', 'ou', 'memberof']);
 if ($msg->code) {
