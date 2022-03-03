@@ -99,7 +99,7 @@ http_access deny blacklist_domain
 http_access deny blacklist_url
 http_access deny blacklist_ip
 
-auth_param basic program /usr/lib64/squid/basic_ldap_auth -b 'dc=example,dc=com' -D 'cn=Manager,dc=example,dc=com' -w xxxxx -f '(&(uid=%s)(&(objectClass=inetOrgPerson)(objectClass=seciossIamAccount)))' <LISMのLDAPサーバー>
+auth_param basic program /usr/lib64/squid/basic_ldap_auth -b 'dc=example,dc=com' -D 'cn=Manager,dc=example,dc=com' -w xxxxx -f '(&(uid=%s)(&(objectClass=inetOrgPerson)(objectClass=seciossIamAccount)))' -H ldaps://<LISMのLDAPサーバー>
 auth_param basic children 20
 auth_param basic realm Authentication
 auth_param basic credentialsttl 2 hours
