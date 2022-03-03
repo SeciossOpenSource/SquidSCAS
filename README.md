@@ -109,7 +109,7 @@ http_access allow ldap-auth
 # Squid normally listens to port 3128
 http_port 3128 ssl-bump generate-host-certificates=on dynamic_cert_mem_cache_size=4MB cert=/etc/squid/squidCA.pem
 
-sslcrtd_program /usr/lib64/squid/ssl_crtd -s /var/lib/squid/ssl_db -M 4MB
+sslcrtd_program /usr/lib64/squid/security_file_certgen -s /var/lib/squid/ssl_db -M 4MB
 acl no_bump_sites dstdomain "/etc/squid/no_bump_sites"
 ssl_bump none no_bump_sites
 ssl_bump server-first all
