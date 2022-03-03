@@ -18,21 +18,32 @@ my $ldap_binddn;
 my $ldap_bindpw;
 my $ldap_basedn;
 
-my $config = Config::General->new('/usr/local/etc/scas_scan.conf');
-my %param = $config->getall;
-foreach my $key ('ldap_uri', 'ldap_binddn', 'ldap_bindpw', 'ldap_basedn') {
-    if (!defined($param{$key})) {
-        print "set $key in scas_scan.conf\n";
-        exit 1;
+if (!open FD, '< /etc/squid/squid.conf') {
+    print "Can't read /etc/squid/squid.conf\n";
+    exit 1;
+}
+while (<FD>) {
+    if ($_ =~ /^auth_param basic program \/usr\/lib64\/squid\/basic_ldap_auth/) {
+        chop;
+        if ($_ =~ / -H ["']?([^ ]+)["']?/) {
+            $ldap_uri = $1;
+        }
+        if ($_ =~ / -D ["']([^"']+)["']/) {
+            $ldap_binddn = $1;
+        }
+        if ($_ =~ / -w ["']?([^"' ]+)["']?/) {
+            $ldap_bindpw = $1;
+        }
+        if ($_ =~ / -b ["']([^"']+)["']/) {
+            $ldap_basedn = $1;
+        }
+        last;
     }
 }
-$ldap_uri = $param{ldap_uri};
-$ldap_binddn = $param{ldap_binddn};
-$ldap_bindpw = $param{ldap_bindpw};
-$ldap_basedn = $param{ldap_basedn};
-$ldap_uri = 'ldap://192.168.158.34';
-$ldap_binddn = 'cn=Manager,dc=secioss,dc=co,dc=jp';
-$ldap_bindpw = 'secret';
+close FD;
+
+my $config = Config::General->new('/usr/local/etc/scas_scan.conf');
+my %param = $config->getall;
 
 openlog('scas_accesspolicy', 'pid', $LOG_FACILITY);
 setlogmask(Sys::Syslog::LOG_UPTO($LOG_LEVEL));
