@@ -183,6 +183,11 @@ log_server = <LISMのサーバー>
 * /var/log/c-icap
 * /usr/local/var/scan
 
+以下のファイルを作成して下さい。
+~~~ text
+# touch /etc/squid/virus
+~~~
+
 LISMのサーバー上で、以下のコマンドを実行して、作成されたscas_service.confを/etc/squidに置いて下さい。
 ~~~ text
 /usr/local/sbin/scas_service.pl > scas_service.conf
