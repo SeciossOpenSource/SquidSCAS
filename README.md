@@ -163,6 +163,7 @@ Service squidscas squidscas.so
 ~~~ text
 scanpath /usr/local/var/scan
 memcached_servers localhost
+blacklist /etc/squid/blacklist_bump
 servicelist /etc/squid/scas_service.conf
 viruslist /etc/squid/virus
 ~~~
