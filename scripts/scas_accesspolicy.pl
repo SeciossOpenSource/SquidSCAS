@@ -120,7 +120,7 @@ for (my $i = 0; $i < $msg->count; $i++) {
             if (defined(${$policies{$id}}{users}) && grep(/^$userid$/i, @{${$policies{$id}}{users}})) {
                 $match = 1;
             }
-            if (defined(${$policies{$id}}{orgs}) && grep(/^$org$/i, @{${$policies{$id}}{orgs}})) {
+            if (defined(${$policies{$id}}{orgs}) && $org && grep(/^$org$/i, @{${$policies{$id}}{orgs}})) {
                 $match = 1;
             }
             if (defined(${$policies{$id}}{groups})) {
