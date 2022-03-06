@@ -55,6 +55,17 @@
 #include <openssl/sha.h>
 #include <curl/curl.h>
 
+#if defined(LIBMEMCACHED_VERSION_HEX)
+#if LIBMEMCACHED_VERSION_HEX > 0x01000000
+#include <libmemcached/util.h>
+#else
+#include <libmemcached/util/pool.h>
+#endif /* LIBMEMCACHED_VERSION_HEX > 0x01000000*/
+#else
+/* And older version of libmemcached*/
+#include <libmemcached/memcached_pool.h>
+#endif
+
 #define INIT_LIST_SIZE 128
 #define LINE_READ_BUFF 1024
 #define MC_DOMAINLEN 32
@@ -140,6 +151,7 @@ static char mail_export_path[PATH_MAX];
 
 static pthread_mutex_t MUTEX = PTHREAD_MUTEX_INITIALIZER;
 static memcached_st *MC = NULL;
+static memcached_pool_st *MC_POOL = NULL;
 
 int squidscas_init_service(ci_service_xdata_t *srv_xdata, struct ci_server_conf *server_conf);
 int squidscas_check_preview_handler(char *preview_data, int preview_data_len, ci_request_t * );
@@ -314,6 +326,14 @@ int squidscas_post_init_service(ci_service_xdata_t *srv_xdata, struct ci_server_
         }
     }
 
+    MC_POOL = memcached_pool_create(MC, 5, 500);
+    if (MC_POOL == NULL) {
+        debugs(1, "FATAL Failed to create connection pool\n");
+        memcached_free(MC);
+        MC = NULL;
+        return CI_ERROR;
+    }
+
     if (authz_api[0]) {
         curl_global_init(CURL_GLOBAL_SSL);
     }
@@ -425,6 +445,7 @@ int squidscas_check_preview_handler(char *preview_data, int preview_data_len, ci
     char ** tokens;
     char *operation = "view";
     memcached_return rc;
+    memcached_st *mlocal;
     uint32_t flags;
     char key[1024];
     char mckey[MC_MAXKEYLEN + 1];
@@ -735,13 +756,25 @@ int squidscas_check_preview_handler(char *preview_data, int preview_data_len, ci
                 mckey[s2 - mckey] = '\0';
             }
         } else {
-            mckeylen = sprintf(mckey, "secioss_cas:secioss_acl");
+            mckeylen = sprintf(mckey, "secioss_cas:service_acl");
         }
-        value = memcached_get(MC, mckey, mckeylen, & value_len, & flags, & rc);
-        if (rc != MEMCACHED_SUCCESS && rc != MEMCACHED_NOTFOUND) {
-            debugs(1, "ERROR Failed to retrieve %s object from cache: %s\n", mckey, memcached_strerror(MC, rc));
+
+        mlocal = memcached_pool_pop(MC_POOL, true, &rc);
+        if (!mlocal) {
+            debugs(1, "Error getting memcached_st object from pool: %s\n", memcached_strerror(MC, rc));
             return CI_MOD_ERROR;
         }
+
+        value = memcached_get(mlocal, mckey, mckeylen, & value_len, & flags, & rc);
+        if (rc != MEMCACHED_SUCCESS && rc != MEMCACHED_NOTFOUND) {
+            debugs(1, "ERROR Failed to retrieve %s object from cache: %s\n", mckey, memcached_strerror(mlocal, rc));
+            return CI_MOD_ERROR;
+        }
+
+        if ((rc = memcached_pool_push(MC_POOL, mlocal)) != MEMCACHED_SUCCESS) {
+            debugs(1, "ERROR Failed to release memcached_st object (%s)!\n", memcached_strerror(MC, rc));
+        }
+
         if (value == NULL && authz_api[0]) {
             value = authorization("acl", username, clientip, user_agent);
             if (value == NULL) {
@@ -788,6 +821,7 @@ int squidscas_check_preview_handler(char *preview_data, int preview_data_len, ci
             } else {
                 sprintf(key, "%s", username);
             }
+
             SHA1_Init( & sha1);
             SHA1_Update( & sha1, (const unsigned char * ) key, strlen(key));
             SHA1_Final(digest, & sha1);
@@ -797,11 +831,23 @@ int squidscas_check_preview_handler(char *preview_data, int preview_data_len, ci
                 digest[8], digest[9], digest[10], digest[11],
                 digest[12], digest[13], digest[14], digest[15],
                 digest[16], digest[17], digest[18], digest[19]);
-            value = memcached_get(MC, mckey, mckeylen, & value_len, & flags, & rc);
-            if (rc != MEMCACHED_SUCCESS && rc != MEMCACHED_NOTFOUND) {
-                debugs(1, "ERROR Failed to retrieve %s(%s %s %s) object from cache: %s\n", mckey, username, clientip, user_agent, memcached_strerror(MC, rc));
+
+            mlocal = memcached_pool_pop(MC_POOL, true, &rc);
+            if (!mlocal) {
+                debugs(1, "Error getting memcached_st object from pool: %s\n", memcached_strerror(MC, rc));
                 return CI_MOD_ERROR;
             }
+
+            value = memcached_get(mlocal, mckey, mckeylen, & value_len, & flags, & rc);
+            if (rc != MEMCACHED_SUCCESS && rc != MEMCACHED_NOTFOUND) {
+                debugs(1, "ERROR Failed to retrieve %s(%s %s %s) object from cache: %s\n", mckey, username, clientip, user_agent, memcached_strerror(mlocal, rc));
+                return CI_MOD_ERROR;
+            }
+
+            if ((rc = memcached_pool_push(MC_POOL, mlocal)) != MEMCACHED_SUCCESS) {
+                debugs(1, "ERROR Failed to release memcached_st object (%s)!\n", memcached_strerror(MC, rc));
+            }
+
             if (value == NULL && authz_api[0]) {
                 value = authorization("token", username, clientip, user_agent);
                 if (value == NULL) {
@@ -809,6 +855,7 @@ int squidscas_check_preview_handler(char *preview_data, int preview_data_len, ci
                     return CI_MOD_ERROR;
                 }
             }
+
             if (value) {
                 debugs(2, "DEBUG tokens(%s %s %s) is %s\n", username, clientip, user_agent, value);
                 elts = split(value, '#');
@@ -870,7 +917,7 @@ int squidscas_check_preview_handler(char *preview_data, int preview_data_len, ci
                             strcat(allowed, "+update");
                         }
                         if (!strcmp(operation, "login") && (s2 = strstr(sprited[1], "+login_domain")) != NULL) {
-                            if (login_domain) {
+                            if (login_domain[0]) {
                                 if (strstr(s2, login_domain) == NULL) {
                                     match = 0;
                                 }
@@ -902,7 +949,7 @@ int squidscas_check_preview_handler(char *preview_data, int preview_data_len, ci
                         } else if (!strcmp(operation, "view") && strstr(sprited[1], "+view+") == NULL) {
                             match = 0;
                         }
-                        if (match && file_extension && (!strcmp(operation, "download") || !strcmp(operation, "upload")) && (s2 = strstr(sprited[1], "+fileext")) != NULL) {
+                        if (match && file_extension[0]  && (!strcmp(operation, "download") || !strcmp(operation, "upload")) && (s2 = strstr(sprited[1], "+fileext")) != NULL) {
                             if (strstr(s2, file_extension) == NULL) {
                                 match = 0;
                             }
@@ -1758,6 +1805,7 @@ void free_global() {
     }
     if (MC) {
         debugs(9, " DEBUG clean memcached_free %p\n", &MC);
+        memcached_pool_destroy(MC_POOL);
         memcached_free(MC);
         MC = NULL;
     }

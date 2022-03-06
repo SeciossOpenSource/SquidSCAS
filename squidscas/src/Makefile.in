@@ -340,7 +340,7 @@ cicapmoduledir = @MODSDIR@
 cicapmodule_LTLIBRARIES = squidscas.la
 OBJDIR = @OBJDIR@
 squidscas_la_LIBADD = @MODULES_LIBADD@
-squidscas_la_LDFLAGS = -module -avoid-version -lmemcached -lmagic -lcurl
+squidscas_la_LDFLAGS = -module -avoid-version -lmemcached -lmemcachedutil -lmagic -lcurl
 squidscas_la_CFLAGS = -I../../include/ @HAVE_TEMPLATE@ @HAVE_HASALLDATA@ @HAVE_ARCHIVE@ -DCONFIGDIR=\"$(CONFIGDIR)\"
 squidscas_la_SOURCES = squidscas.c
 EXTRA_DIST = squidscas.h
