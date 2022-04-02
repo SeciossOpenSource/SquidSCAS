@@ -162,6 +162,8 @@ Service squidscas squidscas.so
 /usr/local/etc/squidscas.confを環境に合わせて変更して下さい。
 
 ~~~ text
+redirect <エラー時にリダイレクトするURL>
+...
 scanpath /usr/local/var/scan
 memcached_servers localhost
 blacklist /etc/squid/blacklist_bump
