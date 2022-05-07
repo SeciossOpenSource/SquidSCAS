@@ -2,6 +2,7 @@
 SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュールで、セキュアWebゲートウェイとして以下の機能を提供します。
 * サービス単位のアクセス制限
 * 更新、共有、ダウンロード、アップロードの制限
+* サービスへの個人アカウントによるログイン禁止
 * ダウンロード、またはアップロードしたファイルのサンドボックス解析
 
 ## 環境
@@ -161,6 +162,8 @@ Service squidscas squidscas.so
 /usr/local/etc/squidscas.confを環境に合わせて変更して下さい。
 
 ~~~ text
+redirect <エラー時にリダイレクトするURL>
+...
 scanpath /usr/local/var/scan
 memcached_servers localhost
 blacklist /etc/squid/blacklist_bump
