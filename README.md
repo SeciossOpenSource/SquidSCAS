@@ -5,7 +5,7 @@ SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュー�
 * Box、Dropbox等のサービスに対する個人アカウントによるログインの禁止
 * ユーザー、グループ単位でのアクセス制御の設定
 * フィッシングサイト等の不正なサイトのURLへのアクセスを禁止
-* ダウンロード、またはアップロードしたファイルのサンドボックス解析ツールとの連携
+* ダウンロード、アップロードしたファイルのサンドボックス解析ツールとの連携
 
 ICAPサーバーとして動作するので、ICAPに対応した既存のプロキシサーバーにセキュアWebゲートウェイの機能を追加することができます。
 本サイトでは、オープンソースのプロキシサーバーSquidを使用して、セキュアWebゲートウェイを構築する手順について、説明しています。
@@ -181,7 +181,8 @@ servicelist /etc/squid/scas_service.conf
 viruslist /etc/squid/virus
 ~~~
 
-/usr/local/etc/scas_scan.confを以下のように設定して下さい。
+/usr/local/etc/scas_scan.confを以下のように設定して下さい。  
+サンドボックス解析ツールのCuckooと連携しない場合は、cuckoo_url、cuckoo_token、hardlimitの設定は不要です。
 
 ~~~ text
 workdir = /usr/local/var/scan
@@ -286,7 +287,7 @@ LISMの管理コンソールにログインして、「CASB」-「アクセス�
 |グループ|アクセスを許可するグループ|
 
 ### squidscas
-プロキシーサーバー上で以下のコマンドを実行すると、管理コンソールで設定したアクセスポリシーがsquidscasに反映されます。
+プロキシサーバー上で以下のコマンドを実行すると、管理コンソールで設定したアクセスポリシーに従ってユーザーのアクセス制御情報ががmemcachedに登録され、squidscasにアクセスポリシーが反映されます。
 ~~~ text
 # /usr/local/sbin/scas_accesspolicy.pl
 ~~~
