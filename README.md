@@ -12,7 +12,7 @@ ICAPサーバーとして動作するので、ICAPに対応した既存のプロ
 
 ## 環境
 * OS：AlmaLinux8
-* ミドルウェア：squid
+* ミドルウェア：squid、memcached
 
 
 ## インストール
