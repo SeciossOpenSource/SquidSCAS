@@ -182,11 +182,11 @@ viruslist /etc/squid/virus
 ~~~
 
 /usr/local/etc/scas_scan.confを以下のように設定して下さい。  
-サンドボックス解析ツールのCuckooと連携しない場合は、cuckoo_url、cuckoo_token、hardlimitの設定は不要です。
+サンドボックス解析ツールのCuckoo Sandboxと連携しない場合は、cuckoo_url、cuckoo_token、hardlimitの設定は不要です。
 
 ~~~ text
 workdir = /usr/local/var/scan
-cuckoo_url = http://<Cuckooのサーバー>:8090
+cuckoo_url = http://<Cuckoo Sandboxのサーバー>:8090
 cuckoo_token = xxxxxxxxxx
 hardlimit = 7.0
 viruslist = /etc/squid/virus
