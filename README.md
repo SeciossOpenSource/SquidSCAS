@@ -1,5 +1,5 @@
 # SquidSCAS
-SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュールで、セキュアWebゲートウェイとして以下の機能を提供します。
+SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュールで、セキュアWebゲートウェイとして以下のCASB機能を提供します。
 * Google Workspace等のサービス単位だけでなく、GMail、Google Calendar等の機能単位でのアクセス制御
 * 参照、更新、共有、ダウンロード、アップロードといった操作レベルでのアクセス制御
 * Box、Dropbox等のサービスに対する個人アカウントによるログインの禁止
