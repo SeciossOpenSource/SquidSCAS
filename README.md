@@ -1,13 +1,18 @@
 # SquidSCAS
-SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュールで、セキュアWebゲートウェイとして以下の機能を提供します。
-* サービス単位のアクセス制限
-* 更新、共有、ダウンロード、アップロードの制限
-* サービスへの個人アカウントによるログイン禁止
-* ダウンロード、またはアップロードしたファイルのサンドボックス解析
+SquidSCASは、オープンソースのICAPサーバーc-icap用のモジュールで、セキュアWebゲートウェイとして以下のCASB機能を提供します。
+* Google Workspace等のサービス単位だけでなく、GMail、Google Calendar等の機能単位でのアクセス制御
+* 参照、更新、共有、ダウンロード、アップロードといった操作レベルでのアクセス制御
+* Box、Dropbox等のサービスに対する個人アカウントによるログインの禁止
+* ユーザー、グループ単位でのアクセス制御の設定
+* フィッシングサイト等の不正なサイトのURLへのアクセスを禁止
+* ダウンロード、アップロードしたファイルのサンドボックス解析ツールとの連携
+
+ICAPサーバーとして動作するので、ICAPに対応した既存のプロキシサーバーにセキュアWebゲートウェイの機能を追加することができます。
+本サイトでは、オープンソースのプロキシサーバーSquidを使用して、セキュアWebゲートウェイを構築する手順について、説明しています。
 
 ## 環境
 * OS：AlmaLinux8
-* ミドルウェア：squid
+* ミドルウェア：squid、memcached
 
 
 ## インストール
@@ -139,8 +144,13 @@ adservice.google.com
 chat.google.com
 ~~~
 
-/usr/local/etc/collectBlackList.confのptkeyにphishtankのアプリケーションキーを設定してから、以下のコマンドを実行して下さい。
-アプリケーションキーはphishtankにアカウントを作成して、https://www.phishtank.com/api_register.php から作成して下さい。
+/usr/local/etc/collectBlackList.confのptkeyにphishtankのアプリケーションキーを設定してから、以下のコマンドを実行すると、アクセスを禁止するサイトのリストが以下の設定ファイルとして生成されます。
+* /etc/squid/blacklist_domain
+* /etc/squid/blacklist_bump
+* /etc/squid/blacklist_url
+* /etc/squid/blacklist_ip
+
+アプリケーションキーはphishtankにアカウントを作成して、https://www.phishtank.com/api_register.php から作成して下さい。  
 
 ~~~ text
 # /usr/local/sbin/collectBlackList.sh
@@ -165,17 +175,18 @@ Service squidscas squidscas.so
 redirect <エラー時にリダイレクトするURL>
 ...
 scanpath /usr/local/var/scan
-memcached_servers localhost
-blacklist /etc/squid/blacklist_bump
+memcached_servers localhost   # アクセス制御情報を保持するmemcachedサーバー
+blacklist /etc/squid/blacklist_bump   # アクセスを禁止するサイトのURLのリスト
 servicelist /etc/squid/scas_service.conf
 viruslist /etc/squid/virus
 ~~~
 
-/usr/local/etc/scas_scan.confを以下のように設定して下さい。
+/usr/local/etc/scas_scan.confを以下のように設定して下さい。  
+サンドボックス解析ツールのCuckoo Sandboxと連携しない場合は、cuckoo_url、cuckoo_token、hardlimitの設定は不要です。
 
 ~~~ text
 workdir = /usr/local/var/scan
-cuckoo_url = http://<Cuckooのサーバー>:8090
+cuckoo_url = http://<Cuckoo Sandboxのサーバー>:8090
 cuckoo_token = xxxxxxxxxx
 hardlimit = 7.0
 viruslist = /etc/squid/virus
@@ -271,12 +282,12 @@ LISMの管理コンソールにログインして、「CASB」-「アクセス�
 |---|---|
 |ユーザー|許可するユーザー|
 |組織|許可するユーザーの組織|
-|ログインを許可するユーザー|サービスにログインするユーザーの制限（LDAPに登録されているユーザーかどうかやログインするユーザーのドメインで制限することができます）|
+|ログインを許可するユーザー|サービスにログインするユーザーの制限（LDAPに登録されているユーザーやログインするユーザーのドメインを制限して、個人アカウントでのログインを禁止します。）|
 |共有を許可するユーザー|クラウドストレージで共有を許可するユーザー|
 |グループ|アクセスを許可するグループ|
 
 ### squidscas
-プロキシーサーバー上で以下のコマンドを実行すると、管理コンソールで設定したアクセスポリシーがsquidscasに反映されます。
+プロキシサーバー上で以下のコマンドを実行すると、管理コンソールで設定したアクセスポリシーに従ってユーザーのアクセス制御情報ががmemcachedに登録され、squidscasにアクセスポリシーが反映されます。
 ~~~ text
 # /usr/local/sbin/scas_accesspolicy.pl
 ~~~
