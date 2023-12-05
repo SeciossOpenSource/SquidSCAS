@@ -525,7 +525,7 @@ int squidscas_check_preview_handler(char *preview_data, int preview_data_len, ci
         return CI_MOD_ERROR;
     }
 
-    if (res_eh = get_headers_from_entities(req->entities, ICAP_RES_HDR)) {
+    if ((res_eh = get_headers_from_entities(req->entities, ICAP_RES_HDR))) {
         for (i=0; i<res_eh->used; i++) {
             debugs(5, "DEBUG Response Header %s\n", res_eh->headers[i]);
         }
@@ -718,9 +718,9 @@ int squidscas_check_preview_handler(char *preview_data, int preview_data_len, ci
         char login_domain[MAX_DOMAIN];
         char share_user[ID_LEN * 10];
 
-        memset(loginid, 0, sizeof(login_domain));
+        memset(loginid, 0, sizeof(loginid));
         memset(login_domain, 0, sizeof(login_domain));
-        memset(share_user, 0, sizeof(login_domain));
+        memset(share_user, 0, sizeof(share_user));
 
         debugs(2, "DEBUG service id requested: %s\n", service_id);
 
@@ -786,6 +786,15 @@ int squidscas_check_preview_handler(char *preview_data, int preview_data_len, ci
             sprintf(buf, "%s:", service_id);
             if (strstr(value, buf) != NULL) {
                 no_acl = 0;
+            } else {
+                s1 = strchr(buf, (int)'/');
+                if (s1) {
+                    buf[s1 - buf + 1] = ':';
+                    buf[s1 - buf + 2] = '\0';
+                    if (strstr(value, buf) != NULL) {
+                        no_acl = 0;
+                    }
+                }
             }
             if (strstr(value, "function:antivirus") == NULL) {
                 scanit = 0;
@@ -930,7 +939,7 @@ int squidscas_check_preview_handler(char *preview_data, int preview_data_len, ci
                                 strcat(allowed, "+share");
                             }
                             if ((s2 = strstr(sprited[1], "+share_user")) != NULL) {
-                                char **share_user_splited = split(s2, '+');
+                                char **share_user_splited = split(s2 + 1, '+');
                                 strncat(share_user, share_user_splited[0], sizeof(share_user));
                                 strncat(share_user, " ", sizeof(share_user));
                                 free(share_user_splited);
@@ -966,7 +975,7 @@ int squidscas_check_preview_handler(char *preview_data, int preview_data_len, ci
                 strcpy(data -> allowed, allowed);
                 if (share_user[0]) {
                     data -> share_user = ci_buffer_alloc(strlen(share_user) + 1);
-                    xstrncpy(data->share_user, share_user, sizeof(share_user));
+                    xstrncpy(data->share_user, share_user, strlen(share_user));
                 }
                 free(tokens);
                 free(elts);
@@ -1196,7 +1205,7 @@ int squidscas_end_of_data_handler(ci_request_t *req) {
                 snprintf(path, sizeof(path), "%s/%04d%02d%02d/%02d%02d%02d_%s_%s.mail", mail_export_path, tm->tm_year+1900, tm->tm_mon+1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, data->operation, data->user);
                 debugs(9, "DEBUG create file %s\n", path);
                 FILE *fp;
-                if (fp = fopen(path, "wb")) {
+                if ((fp = fopen(path, "wb"))) {
                     fprintf(fp, "%s", body);
                     fclose(fp);
                 }
