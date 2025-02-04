@@ -57,8 +57,8 @@ c-icapを http://c-icap.sourceforge.net/download.html からダウンロード�
 # make install
 ~~~
 
-### 管理コンソール
-管理コンソールとして、LISM( https://github.com/SeciossOpenSource/LISM )を別サーバーにインストールして下さい。
+### LDAPサーバー
+ユーザー、グループ、アクセスポリシーの情報を格納するため、LISM用LDAPAサーバーの設定( https://github.com/SeciossOpenSource/LISM )の手順に従って、LDAPサーバーのインストール、設定を行って下さい。
 
 ### その他
 ~~~ text
@@ -265,27 +265,86 @@ if $programname == 'c-icap' and $msg contains 'LOG ' then {
 
 
 ## アクセス制限
-### 管理コンソール
-LISMの管理コンソールにログインして、「CASB」-「アクセスポリシー」からアクセス制限を行いたいサービスに対して、アクセスポリシーを設定します。
-アクセスポリシーの設定項目は、以下になります。
-|項目|説明|
-|---|---|
-|ID|アクセスポリシーのID|
-|カテゴリ|対象サービスのカテゴリ|
-|サービス|対象サービス|
-|許可する操作|サービスに対して、ユーザーに許可する操作|
-|許可するファイル拡張子|ダウンロード、アップロードを許可するファイルの拡張子|
-|説明|アクセスポリシーの説明|
-|状態|アクセスポリシーの有効・無効|
+### ユーザー
+ユーザーの情報をLDAPの"ou=People,<LDAPのベースDN>"に登録します。
+ユーザーの項目とLDAPの属性は、以下になります。
+|項目|LDAP属性|説明|
+|---|---|---|
+|オブジェクトクラス|objectClass|inetOrgPerson、seciossIamAccount|
+|ユーザーID|uid|ユーザーのID|
+|姓名|cn、sn、givenName|ユーザーの姓、名|
+|メールアドレス|mail|ユーザーのメールアドレス|
+|組織|ou|ユーザーの所属する組織|
+|パスワード|userPassword|ユーザーのパスワード|
 
-アクセス対象のユーザーは、「許可するユーザー」、「許可するグループ」から設定可能です。
-|項目|説明|
-|---|---|
-|ユーザー|許可するユーザー|
-|組織|許可するユーザーの組織|
-|ログインを許可するユーザー|サービスにログインするユーザーの制限（LDAPに登録されているユーザーやログインするユーザーのドメインを制限して、個人アカウントでのログインを禁止します。）|
-|共有を許可するユーザー|クラウドストレージで共有を許可するユーザー|
-|グループ|アクセスを許可するグループ|
+例：
+~~~ text
+dn: uid=user01,ou=People,dc=secioss,dc=co,dc=jp
+objectClass: inetOrgPerson
+objectClass: seciossIamAccount
+uid: user01
+cn: 田中 一郎
+sn: 田中
+givenName: 一郎
+mail: user01@example.com
+ou: sales
+userPassword: xxxxxxxxxx
+~~~
+
+### グループ
+グループの情報をLDAPの"ou=Groups,<LDAPのベースDN>"に登録します。
+グループの項目とLDAPの属性は、以下になります。
+|項目|LDAP属性|説明|
+|---|---|---|
+|オブジェクトクラス|objectClass|posixGroup、seciossGroup|
+|グループ名|cn|グループの名前|
+|GID|gidNumber|任意の数字|
+|メンバー|seciossMember|メンバーのユーザーのDN|
+
+例：
+~~~ text
+dn: cn=group01,ou=Groups,dc=secioss,dc=co,dc=jp
+objectClass: posixGroup
+objectClass: seciossGroup
+cn: group01
+gidNumber: 100
+seciossMember: uid=user01,ou=People,dc=secioss,dc=co,dc=jp
+~~~
+
+### アクセスポリシー
+アクセスポリシーの情報をLDAPの"ou=AccessPolicies,<LDAPのベースDN>"に登録します。
+アクセスポリシーの設定項目とLDAPの属性は、以下になります。
+|項目|LDAP属性|説明|
+|---|---|---|
+|オブジェクトクラス|objectClass|seciossAccessPolicy|
+|ID|cn|アクセスポリシーのID|
+|サービス|seciossAccessResource|対象サービス<br>/etc/squid/scas_service.confのTSVの1列目の値から選択して下さい。|
+|許可する操作|seciossAccessRole|サービスに対して、ユーザーに許可する操作<br>・更新：update<br>・参照：view<br>・共有：shared<br>・ダウンロード：download<br>・アップロード：upload|
+|許可するファイル拡張子|seciossAccessRole|ダウンロード、アップロードを許可するファイルの拡張子<br>fileextの後にファイルの拡張子を"\|"で連結します。<br>例：fileext\|pdf\|doc\||
+|状態|seciossRuleEnabled|アクセスポリシーの有効(TRUE)・無効(FALSE)|
+|ユーザー|seciossAccessAllowedUser|許可するユーザーのユーザーID|
+|組織|seciossAccessAllowedUser;x-org|許可するユーザーの組織|
+|ログインを許可するユーザー|seciossAccessRole|サービスにログインするユーザーのドメインを制限して、個人アカウントでのログインを禁止します。<br>personalとlogin_domainの後にドメインを"\|"で連結した値を登録します。<br>例：login_domain\|example1.com\|example2.com\||
+|共有を許可するユーザー|seciossAccessRole|クラウドストレージで共有を許可するユーザーをユーザーID、ドメインで指定します。<br>share_userの後にユーザーID、ドメインを"\|"で連結します。<br>例：share_user\|user01\|example.com\||
+|グループ|seciossAccessAllowedRole|アクセスを許可するグループのDN|
+
+例：
+~~~ text
+dn: cn=policy01,ou=AccessPolicies,dc=secioss,dc=co,dc=jp
+objectClass: seciossAccessPolicy
+cn: policy01
+seciossAccessResource: storage/dropbox
+seciossAccessRole: update
+seciossAccessRole: view
+seciossAccessRole: shared
+seciossAccessRole: personal
+seciossAccessRole: share_user|user01|example.com|
+seciossAccessRole: login_domain|example1.com|example2.com|
+seciossAccessRole: fileext|pdf|doc|
+seciossAccessAllowedUser: user01
+seciossAccessAllowedRole: cn=group01,ou=People,dc=secioss,dc=co,dc=jp
+seciossRuleEnabled: True
+~~~
 
 ### squidscas
 プロキシサーバー上で以下のコマンドを実行すると、管理コンソールで設定したアクセスポリシーに従ってユーザーのアクセス制御情報ががmemcachedに登録され、squidscasにアクセスポリシーが反映されます。
