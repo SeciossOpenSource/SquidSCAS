@@ -65,6 +65,7 @@ c-icapを http://c-icap.sourceforge.net/download.html からダウンロード�
 # cp scripts/*.sh /usr/local/sbin
 # cp scripts/*.pl /usr/local/sbin
 # cp scripts/*.conf /usr/local/etc
+# cp scripts/cloud_discovery.db /usr/local/etc
 # cp squidscas/scripts/* /usr/local/sbin
 ~~~
 
@@ -202,9 +203,9 @@ log_server = <LISMのサーバー>
 # touch /etc/squid/virus
 ~~~
 
-LISMのサーバー上で、以下のコマンドを実行して、作成されたscas_service.confを/etc/squidに置いて下さい。
+以下のコマンドを実行して、/etc/squid/scas_service.confを作成して下さい。
 ~~~ text
-/usr/local/sbin/scas_service.pl > scas_service.conf
+/usr/local/sbin/scas_service.pl > /etc/squid/scas_service.conf
 ~~~
 
 
