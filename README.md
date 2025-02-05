@@ -342,7 +342,7 @@ seciossAccessRole: share_user|user01|example.com|
 seciossAccessRole: login_domain|example1.com|example2.com|
 seciossAccessRole: fileext|pdf|doc|
 seciossAccessAllowedUser: user01
-seciossAccessAllowedRole: cn=group01,ou=People,dc=secioss,dc=co,dc=jp
+seciossAccessAllowedRole: cn=group01,ou=Groups,dc=secioss,dc=co,dc=jp
 seciossRuleEnabled: True
 ~~~
 
