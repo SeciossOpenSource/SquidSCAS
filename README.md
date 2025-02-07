@@ -145,13 +145,17 @@ adservice.google.com
 chat.google.com
 ~~~
 
-/usr/local/etc/collectBlackList.confのptkeyにphishtankのアプリケーションキーを設定してから、以下のコマンドを実行すると、アクセスを禁止するサイトのリストが以下の設定ファイルとして生成されます。
+phsitankのアプリケーションキーを持っている場合、/usr/local/etc/collectBlackList.confのptkeyにアプリケーションキーを設定してから、/usr/local/sbin/collectBlackList.shを実行すると、アクセスを禁止するサイトのリストが以下の設定ファイルとして生成されます。
 * /etc/squid/blacklist_domain
 * /etc/squid/blacklist_bump
 * /etc/squid/blacklist_url
 * /etc/squid/blacklist_ip
 
-アプリケーションキーはphishtankにアカウントを作成して、https://www.phishtank.com/api_register.php から作成して下さい。  
+現在phishtankでアカウントを作成することができないので、その場合はptkeyを設定せずにcollectBlackList.shを実行して下さい。
+https://github.com/Phishing-Database/Phishing.Database のデータをもとに、アクセスを禁止するサイトのリストとして、以下のファイルが生成されます。
+* /etc/squid/blacklist_domain
+* /etc/squid/blacklist_url
+* /etc/squid/blacklist_ip
 
 ~~~ text
 # /usr/local/sbin/collectBlackList.sh
