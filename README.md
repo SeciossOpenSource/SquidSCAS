@@ -186,6 +186,8 @@ servicelist /etc/squid/scas_service.conf
 viruslist /etc/squid/virus
 ~~~
 
+※ /usr/local/etc/collectBlacklist.confでphishtankの設定を行っていない場合、/etc/squid/blacklist_bumpが作成されないので、blacklistの設定は削除して下さい。
+
 /usr/local/etc/scas_scan.confを以下のように設定して下さい。  
 サンドボックス解析ツールのCuckoo Sandboxと連携しない場合は、cuckoo_url、cuckoo_token、hardlimitの設定は不要です。
 
